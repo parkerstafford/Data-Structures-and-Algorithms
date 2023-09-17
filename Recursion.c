@@ -11,7 +11,7 @@ int main() {
 
 void eatBanana(int bananas) {
     if (bananas < 1) return;
-    printf("You take ate a banana!\n");
+    printf("You ate a banana!\n");
 
     eatBanana(bananas - 1);
 }
