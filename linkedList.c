@@ -1,119 +1,118 @@
-#include <stdio.h>
-#include <stdlib.h>
+using System;
 
-struct node {
-    int data;
-    struct node* next;
-};
+class Node
+{
+    public int Data;
+    public Node Next;
 
-struct node* insertAtBeginning(int data);
-struct node* linkedListInsert(struct node* head, int index, int data);
-
-int main() {
-    struct node one = {
-            2,
-            NULL
-    };
-    struct node two = {
-            3,
-            NULL
-    };
-
-    struct node* newHead = linkedListInsert(&one, 0, 3);
-    struct node* newNode = linkedListInsert(&one, 1, 3);
-
-
-    printf("Address of newHead's next: %p\n", (void*)(newHead->next));
-    printf("Address of newNode: %p\n", (void*)(newNode));
-
-    return 0;
+    public Node(int data)
+    {
+        Data = data;
+        Next = null;
+    }
 }
 
-struct node* linkedListInsert(struct node* head, int index, int data) {
-    if (index == 0) {
-        struct node* newHead = (struct node*)malloc(sizeof(struct node));
-        if (newHead == NULL) {
-            fprintf(stderr, "Memory allocation error\n");
-            exit(1);
+class LinkedList
+{
+    public static Node InsertAtBeginning(int data, Node head)
+    {
+        Node newNode = new Node(data);
+        newNode.Next = head;
+        return newNode;
+    }
+
+    public static Node LinkedListInsert(Node head, int index, int data)
+    {
+        if (index == 0)
+        {
+            return InsertAtBeginning(data, head);
         }
-        newHead->data = data;
-        newHead->next = head;
-        return newHead;
-    }
 
-    struct node* current = head;
-    struct node* previous = NULL;
-    int count = 0;
+        Node current = head;
+        Node previous = null;
+        int count = 0;
 
-    while (count < index && current != NULL) {
-        previous = current;
-        current = current->next;
-        count = count + 1;
-    }
+        while (count < index && current != null)
+        {
+            previous = current;
+            current = current.Next;
+            count++;
+        }
 
-    if (count < index) {
-        printf("Invalid index error.\n");
+        if (count < index)
+        {
+            Console.WriteLine("Invalid index error.");
+            return head;
+        }
+
+        Node newNode = new Node(data);
+        newNode.Next = previous.Next;
+        previous.Next = newNode;
+
         return head;
     }
 
-    struct node* newNode = (struct node*)malloc(sizeof(struct node));
-    if (newNode == NULL) {
-        fprintf(stderr, "Memory allocation error\n");
-        exit(1);
-    }
-    newNode->data = data;
-    newNode->next = previous->next;
-    previous->next = newNode;
+    public static Node LinkedListLookup(Node head, int elementNumber)
+    {
+        Node current = head;
+        int count = 0;
 
-    return head;
-}
+        while (count < elementNumber && current != null)
+        {
+            current = current.Next;
+            count++;
+        }
 
-struct node* insertAtBeginning(int data) {
-    struct node* lk = (struct node*)malloc(sizeof(struct node));
-    lk->data = data;
-
-    return lk;
-}
-
-struct node* linkedListLookup(struct node* head, int elementNumber) {
-    struct node* current = head;
-    int count = 0;
-
-    while (count < elementNumber && current != NULL) {
-        current = current->next;
-        count += 1;
-    }
-    return current;
-}
-
-struct node* linkedListDelete(struct node* head, int index) {
-    if (head == NULL) {
-        return NULL;
+        return current;
     }
 
-    if (index == 0) {
-        struct node* newHead = head->next;
-        head->next = NULL;
-        free(head);
-        return newHead;
+    public static Node LinkedListDelete(Node head, int index)
+    {
+        if (head == null)
+        {
+            return null;
+        }
+
+        if (index == 0)
+        {
+            Node newHead = head.Next;
+            head.Next = null;
+            return newHead;
+        }
+
+        Node current = head;
+        Node previous = null;
+        int count = 0;
+
+        while (count < index && current != null)
+        {
+            previous = current;
+            current = current.Next;
+            count++;
+        }
+
+        if (current != null)
+        {
+            previous.Next = current.Next;
+            current.Next = null;
+        }
+        else
+        {
+            Console.WriteLine("Invalid index");
+        }
+
+        return head;
     }
 
-    struct node* current = head;
-    struct node* previous = NULL;
-    int count = 0;
+    static void Main()
+    {
+        Node one = new Node(2);
+        Node two = new Node(3);
 
-     while (count < index && current != NULL) {
-         previous = current;
-         current = current->next;
-         count++;
-     }
+        Node newHead = LinkedListInsert(one, 0, 3);
+        Node newNode = LinkedListInsert(one, 1, 3);
 
-     if (current != NULL) {
-         previous->next = current->next;
-         current->next = NULL;
-     } else {
-         fprintf(stderr, "Invalid index");
-     }
-
-     return head;
+        Console.WriteLine("Address of newHead's next: {0}", newHead?.Next);
+        Console.WriteLine("Address of newNode: {0}", newNode);
+    }
 }
