@@ -1,144 +1,199 @@
-#include <stdio.h>
-#include <malloc.h>
+using System;
 
-struct TreeNode {
-    int value;
-    struct TreeNode *left;
-    struct TreeNode *right;
-    struct TreeNode *parent;
-};
+class TreeNode
+{
+    public int Value;
+    public TreeNode Left;
+    public TreeNode Right;
+    public TreeNode Parent;
 
-struct BinarySearchTree {
-    struct TreeNode *root;
-};
-
-struct TreeNode* treeSearch(struct TreeNode *treeNode, int find);
-struct TreeNode* findTreeNode(struct BinarySearchTree *binarySearchTree, int find);
-void insertTreeNode(struct BinarySearchTree *binarySearchTree, int add);
-void insertNode(struct TreeNode *treeNode, int add);
-void removeTreeNode(struct BinarySearchTree *tree, struct TreeNode *node);
-
-
-int main() {
-    return 0;
-}
-
-struct TreeNode* treeSearch(struct TreeNode *current, int find) {
-    if (current == NULL) {
-        return NULL;
-    }
-    if (current->value == find) {
-        return current;
-    }
-
-    if (find < current->value && current->left != NULL) {
-        return treeSearch(current->left, find);
-    }
-
-    if (find > current->value && current->right != NULL) {
-        return treeSearch(current->right, find);
-    }
-
-    return NULL;
-}
-
-struct TreeNode* findTreeNode(struct BinarySearchTree *binarySearchTree, int find) {
-    if (binarySearchTree->root == NULL) {
-        return NULL;
-    }
-    return treeSearch(binarySearchTree->root, find);
-}
-
-void insertTreeNode(struct BinarySearchTree *binarySearchTree, int add) {
-    if (binarySearchTree->root == NULL) {
-        struct TreeNode *root = malloc(sizeof(struct TreeNode));
-        root->value = add;
-    } else {
-        insertTreeNode(binarySearchTree->root, add);
+    public TreeNode(int value)
+    {
+        Value = value;
+        Left = null;
+        Right = null;
+        Parent = null;
     }
 }
 
-void insertNode(struct TreeNode *treeNode, int add) {
-    if (add == treeNode->value) {
-    }
-    if (add < treeNode->value) {
-        if (treeNode->left != NULL) {
-            insertTreeNode(treeNode, add);
-        } else {
-            struct TreeNode *node = malloc(sizeof(struct TreeNode));
-            node->value = add;
-            treeNode->left = node;
-            treeNode->left->parent = treeNode;
-        }
-    } else {
-        if (treeNode->right != NULL) {
-            insertTreeNode(treeNode, add);
-        } else {
-            struct TreeNode *node = malloc(sizeof(struct TreeNode));
-            node->value = add;
-            treeNode->right = node;
-            treeNode->right->parent = treeNode;
-        }
-    }
-}
+class BinarySearchTree
+{
+    public TreeNode Root;
 
-void removeTreeNode(struct BinarySearchTree *tree, struct TreeNode *node) {
-    if (tree->root == NULL || node == NULL) {
-        exit(1);
-    }
-
-    // Deleting a leaf node
-    if (node->left == NULL && node->right == NULL) {
-        if (node->parent == NULL) {
-            tree->root = NULL;
-        } else if (node->parent->left == node) {
-            node->parent->left = NULL;
-        } else {
-            node->parent->right = NULL;
+    public TreeNode TreeSearch(TreeNode currentNode, int find)
+    {
+        if (currentNode == null)
+        {
+            return null;
         }
-        return;
-    }
-    // Deleting a node with one child
-    if (node->left == NULL || node->right == NULL) {
-        struct TreeNode *child;
-        child = node->left;
-        if (node->left == NULL) {
-            child = node->right;
+        if (currentNode.Value == find)
+        {
+            return currentNode;
         }
 
-        child->parent = node->parent;
-        if (node->parent == NULL) {
-            tree->root = child;
-        } else if (node->parent->left == node) {
-            node->parent->left = child;
-        } else {
-            node->parent->right = child;
+        if (find < currentNode.Value && currentNode.Left != null)
+        {
+            return TreeSearch(currentNode.Left, find);
         }
-        return;
-    }
-    // Deleting a node with two children.
 
-    struct TreeNode *successor = node->right;
-    while(successor->left != NULL) {
-        successor = successor->left;
-        removeTreeNode(tree, successor);
-    }
+        if (find > currentNode.Value && currentNode.Right != null)
+        {
+            return TreeSearch(currentNode.Right, find);
+        }
 
-    if (node->parent == NULL) {
-        tree->root = successor;
-    } else if (node->parent->left == node) {
-        node->parent->left = successor;
-    } else {
-        node->parent->right = successor;
+        return null;
     }
 
-    successor->parent = node->parent;
+    public TreeNode FindTreeNode(int find)
+    {
+        if (Root == null)
+        {
+            return null;
+        }
+        return TreeSearch(Root, find);
+    }
 
-    successor->left = node->left;
-    node->left->parent = successor;
+    public void InsertTreeNode(int add)
+    {
+        if (Root == null)
+        {
+            Root = new TreeNode(add);
+        }
+        else
+        {
+            InsertNode(Root, add);
+        }
+    }
 
-    successor->right = node->right;
-    if (node->right != NULL) {
-        node->right->parent = successor;
+    private void InsertNode(TreeNode treeNode, int add)
+    {
+        if (add == treeNode.Value)
+        {
+           
+        }
+        if (add < treeNode.Value)
+        {
+            if (treeNode.Left != null)
+            {
+                InsertNode(treeNode.Left, add);
+            }
+            else
+            {
+                TreeNode node = new TreeNode(add);
+                treeNode.Left = node;
+                node.Parent = treeNode;
+            }
+        }
+        else
+        {
+            if (treeNode.Right != null)
+            {
+                InsertNode(treeNode.Right, add);
+            }
+            else
+            {
+                TreeNode node = new TreeNode(add);
+                treeNode.Right = node;
+                node.Parent = treeNode;
+            }
+        }
+    }
+
+    public void RemoveTreeNode(TreeNode node)
+    {
+        if (Root == null || node == null)
+        {
+            throw new InvalidOperationException("Invalid operation");
+        }
+
+        if (node.Left == null && node.Right == null)
+        {
+            RemoveLeafNode(node);
+        }
+        else if (node.Left == null || node.Right == null)
+        {
+            RemoveNodeWithOneChild(node);
+        }
+        else
+        {
+            RemoveNodeWithTwoChildren(node);
+        }
+    }
+
+    private void RemoveLeafNode(TreeNode node)
+    {
+        if (node.Parent == null)
+        {
+            Root = null;
+        }
+        else if (node.Parent.Left == node)
+        {
+            node.Parent.Left = null;
+        }
+        else
+        {
+            node.Parent.Right = null;
+        }
+    }
+
+    private void RemoveNodeWithOneChild(TreeNode node)
+    {
+        TreeNode child = (node.Left != null) ? node.Left : node.Right;
+        child.Parent = node.Parent;
+
+        if (node.Parent == null)
+        {
+            Root = child;
+        }
+        else if (node.Parent.Left == node)
+        {
+            node.Parent.Left = child;
+        }
+        else
+        {
+            node.Parent.Right = child;
+        }
+    }
+
+    private void RemoveNodeWithTwoChildren(TreeNode node)
+    {
+        TreeNode successor = FindSuccessor(node);
+        RemoveTreeNode(successor);
+
+        successor.Parent = node.Parent;
+        successor.Left = node.Left;
+        successor.Right = node.Right;
+
+        if (node.Parent == null)
+        {
+            Root = successor;
+        }
+        else if (node.Parent.Left == node)
+        {
+            node.Parent.Left = successor;
+        }
+        else
+        {
+            node.Parent.Right = successor;
+        }
+
+        if (node.Left != null)
+        {
+            node.Left.Parent = successor;
+        }
+        if (node.Right != null)
+        {
+            node.Right.Parent = successor;
+        }
+    }
+
+    private TreeNode FindSuccessor(TreeNode node)
+    {
+        TreeNode successor = node.Right;
+        while (successor.Left != null)
+        {
+            successor = successor.Left;
+        }
+        return successor;
     }
 }
